@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Hello App</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <style>
+    body{
+        text-align:center;
+    }
+    .main-container{
+        display: inline-block;
+    }
+    .textarea{
+        height:400px;
+        width:750px;
+        border:1px solid black;
+        overflow:scroll;
+    }
+    </style>
+    <script type ="text/javascript">
+        $(document).ready(function (){
+            var socket = io(); //1
+        //     socket.on('greeting', function (data) { //4
+        //         console.log(data.msg); //5
+        //         socket.emit('thankyou', { msg: 'Thank you for connecting me! -Client' }); //6
+        //     });
+            $('.message-form').submit(function(){
+                // console.log('hi!',$('.message-form input[name=message]').val())
+                socket.emit('message', {username: $('.message-form input[name=username]').val(), msg: $('.message-form input[name=message]').val()
+                })
+                $('.message-form input[name=message]').val('');
+                return false;
+            })
+            socket.on('broadcast', function(data){
+                console.log(data);
+                $('.textarea').append(`<p>${data.username}:  ${data.msg}</p>`)
+            })
+
+         })
+    </script>
+</head>
+<body>
+    <div class='main-container'>
+        <h1>Conversation Board</h1>  
+        <!-- <textarea class="textarea" name="" id="" cols="30" rows="10"></textarea> -->
+        <div class="textarea"></div>
+        <form class="message-form" action="">
+            <label for="username">Username:
+                <input type="text" name="username">
+            </label>
+            <label for="message">Message:
+                <input type="text" name="message">
+            </label>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+</body>
+</html>
