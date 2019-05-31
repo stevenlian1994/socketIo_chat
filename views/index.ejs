@@ -1,8 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Hello App</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <style>
     body{
@@ -16,35 +18,62 @@
         width:750px;
         border:1px solid black;
         overflow:scroll;
+        overflow-y: auto;  
     }
     </style>
     <script type ="text/javascript">
-        $(document).ready(function (){
-            var socket = io(); //1
-        //     socket.on('greeting', function (data) { //4
-        //         console.log(data.msg); //5
-        //         socket.emit('thankyou', { msg: 'Thank you for connecting me! -Client' }); //6
-        //     });
-            $('.message-form').submit(function(){
-                // console.log('hi!',$('.message-form input[name=message]').val())
-                socket.emit('message', {username: $('.message-form input[name=username]').val(), msg: $('.message-form input[name=message]').val()
-                })
-                $('.message-form input[name=message]').val('');
-                return false;
-            })
-            socket.on('broadcast', function(data){
-                console.log(data);
-                $('.textarea').append(`<p>${data.username}:  ${data.msg}</p>`)
-            })
+            $(document).ready(function (){
+                var socket = io(); //1
+                var objDiv = document.getElementById('box');
 
-         })
-    </script>
+                $('#new-chat').submit(function(){
+                    $('.textarea').html('')
+                    socket.emit('disc', {room:$('#room-num').html()})
+                    socket.emit('pairUp', $('#new-chat input[name=username]').val())
+                    return false
+                })
+
+                $('.message-form').submit(function(){
+                    socket.emit('message', {
+                        username: $('.message-form input[name=username]').val(), 
+                        msg: $('.message-form input[name=message]').val(),
+                        room: $('#room-num').html()
+                    })
+                    $('.message-form input[name=message]').val('');
+                    return false;
+                })
+                socket.on('broadcast', function(data){
+                    console.log(data);
+                    if(data['second-user']){
+                        console.log('in here')
+                        $('.textarea').append(data['second-user'])
+                    } else {
+                        console.log('yo')
+                        $('.textarea').append(`<p>${data.username}:  ${data.msg}</p>`)
+                    }
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                })
+                socket.on('room-number', function(data){
+                    console.log('received room number', data)
+                    $('#room-num').html(data['room-number'])
+                    if (data.waiting){
+                        $('.textarea').append(`<p>${data.waiting}</p>`)
+                    }
+                })
+             })
+        </script>
+    <title>Document</title>
 </head>
 <body>
-    <div class='main-container'>
-        <h1>Conversation Board</h1>  
-        <!-- <textarea class="textarea" name="" id="" cols="30" rows="10"></textarea> -->
-        <div class="textarea"></div>
+    <div class='main-container'>    
+        <form id="new-chat"> 
+            <label for="">Name: </label>
+            <input type="text" name="username">
+            <input type="submit" value="Chat with a Stranger">
+            <!-- <button id='new-chat'>Chat with a Stranger</button> -->
+        </form>
+        <h1>Conversation Board | Room <span id="room-num"></span></h1>  
+        <div id="box" class="textarea"></div>
         <form class="message-form" action="">
             <label for="username">Username:
                 <input type="text" name="username">
@@ -55,5 +84,6 @@
             <input type="submit" value="Send">
         </form>
     </div>
+    
 </body>
 </html>

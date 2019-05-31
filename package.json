@@ -1,20 +1,19 @@
 {
-  "name": "javascript_stack",
+  "name": "hello_express",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
     "ejs": "^2.6.1",
-    "express": "^4.17.0",
-    "mongoose": "^5.5.11",
+    "express": "^4.17.1",
+    "mongoose": "^5.5.12",
+    "node-localstorage": "^1.3.1",
     "socket.io": "^2.2.0"
   }
 }
