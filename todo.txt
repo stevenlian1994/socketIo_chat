@@ -1,1 +1,3 @@
-add login and registration
+-add login and registration
+-add angular
+-fix input form
