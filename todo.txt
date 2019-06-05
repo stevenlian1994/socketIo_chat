@@ -1,3 +1,4 @@
 -add login and registration
 -add angular
 -fix input form
+-add styling/css
